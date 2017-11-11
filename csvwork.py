@@ -2,33 +2,18 @@ import pandas as pd
 
 df = pd.read_csv('data.csv', low_memory=False)
 
-df = df[pd.notnull(df)]
+df = df.dropna()
 
 df = df[[
 	'LATITUDE', 'LONGITUDE', 'DATE(IST)',
-	'AIR_TEMPERATURE1(°C at 2m height)',
-	'SOIL_TEMPERATURE1(°C at 0.50m height)',
+	'AIR_TEMPERATURE',
+	'SOIL_TEMPERATURE',
 	'SOIL_MOISTURE',
-	'RAINFALL(mm)'
+	'RAINFALL'
 ]]
 
-
-start_date = "06/04/2012"
-end_date = "06/09/2017"
-
-'''
-def dates(row):
-	val = row['DATE(IST)']
-
-	if val == 0:
-		count += 1
-		if count > 500:
-			return float('NaN')
-	return val
-'''
-
-df.drop_duplicates(subset='DATE(IST)')
-#df['DATE(IST)'] = df.apply(dates, axis=1)
-#df = df[pd.notnull(df['DATE(IST)'])]
+df = df.drop_duplicates(subset='DATE(IST)')
+df['DATE(IST)'] = df['DATE(IST)'].replace(to_replace='-', value='/', regex=True)
+df['DATE(IST)'] = df['DATE(IST)'].replace(to_replace='/0', value='/', regex=True)
 
 df.to_csv('edit.csv', index=False)
